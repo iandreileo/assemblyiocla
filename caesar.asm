@@ -24,58 +24,82 @@ caesar:
 iterate:
     ;initializam cu 0 registrul eax
     xor eax, eax
+    
     ;punem in al caracterul din plaintext
     mov al, byte [esi + ebx]
 
     ;testam daca al este litera
     mov dword [iterator], 0
-    cmp al, 0x41               ; compare al with "A"
-    jl next_char               ; jump to next character if less
-    cmp al, 0x5A               ; compare al with "Z"
-    jle found_letter           ; if al is >= "A" && <= "Z" -> found a letter
-    cmp al, 0x61               ; compare al with "a"
-    jl next_char               ; jump to next character if less (since it's between "Z" & "a")
-    cmp al, 0x7A               ; compare al with "z"
-    jg next_char               ; above "Z" -> not a character
-
+    ;comparam al cu A
+    cmp al, 0x41
+    ; daca e mai mic sarim la urmatorul caracter              
+    jl next_char
+    ;comparam al cu Z               
+    cmp al, 0x5A               
+    ;daca al e intre A si Z am gasit o litera
+    jle found_letter           
+    ;compara al cu a
+    cmp al, 0x61               
+    ;sarim la urmatorul caracter
+    jl next_char
+    ;comparam al cu z               
+    cmp al, 0x7A               
+    ;daca e peste Z sarim la urmatorul caracter
+    jg next_char              
+    ;daca nu inseamna ca e intre a si z
 
 found_letter:
     ;setam iteratorul la 0
     mov dword [iterator], 0
+    ;vedem daca cheia este 0
     cmp edi, 0
+    ;daca cheia e 0 sarim la urmatorul caracter
     jle next_char
 iterateLetter:
     ;crestem iteratorul
     add dword [iterator], 1
     ;testam daca suntem pe z
     cmp al, 0x7A
+    ;daca suntem pe z sarim pe cazul z-ului mic
     je noCapsLetter
 
     ;testam daca suntem pe Z
     cmp al, 0x5a
+    ;daca suntem pe Z sarim pe cazul Z-ului mare
     je capsLetter
 
+    ;daca suntem intermediar, iteram normal
     jmp final
         
-    final:
-        inc al
-        cmp dword [iterator], edi
-        jb iterateLetter
-        jle next_char
+;eticheta de iterat normal
+final:
+    ;crestem al cu 1
+    inc al
+    ;comparam iteratorul cu cheia
+    cmp dword [iterator], edi
+    ;vedem daca iteram pentru acest caracter sau sarim la urmatorul caracter
+    jb iterateLetter
+    jle next_char
+    
+;eticheta pentru iterat Z
+capsLetter:
+    ;punem in al A
+    mov al, 0x41 
+    ;comparam iteratorul cu numarul din key
+    cmp dword [iterator], edi
+    ;intram in bucla din nou
+    jb iterateLetter
 
-    capsLetter:
-        mov al, 0x41 
-        ;comparam iteratorul cu numarul din key
-        cmp dword [iterator], edi
-        jb iterateLetter
+;eticheta pentru iterat z
+noCapsLetter:
+    ;punem in al a
+    mov al, 0x61
+    ;comparam iteratorul cu numarul din key
+    cmp dword [iterator], edi
+    ;intram in bucla din nou
+    jb iterateLetter
 
-    noCapsLetter:
-        mov al, 0x61
-        ;comparam iteratorul cu numarul din key
-        cmp dword [iterator], edi
-        jb iterateLetter
-
-     
+;trecem la urmatorul char
 next_char:
 
     ;punem litera in ciphertext
@@ -87,7 +111,6 @@ next_char:
     ;facem un jump conditionat de cmp-ul de mai sus
     jne     iterate
 
-    PRINTF32 `%s\x0`, edx
     ;; DO NOT MODIFY
     popa
     leave
