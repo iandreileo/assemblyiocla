@@ -21,23 +21,23 @@ otp:
     ;initializam cu 0 storage-ul pentru iterator
     xor ebx, ebx
     ;aici e eticheta de iterator
-    iterate:
-        ;initializam cu 0 registrul eax
-        xor eax, eax
-        ;punem in al caracterul din plaintext
-        mov al, byte [esi + ebx]
-        ;punem in ah caracterul din key
-        mov ah, byte [edi + ebx]
-        ;facem xor intre caractere
-        xor al, ah
-        ;punem xor-ul in ciphertext
-        mov [edx + ebx], byte al
-        ;incrementam contorul
-        inc     ebx
-        ;testam daca am ajuns la length
-        cmp     ebx, ecx
-        ;facem un jump conditionat de cmp-ul de mai sus
-        jne     iterate
+iterate:
+    ;initializam cu 0 registrul eax
+    xor eax, eax
+    ;punem in al caracterul din plaintext
+    mov al, byte [esi + ebx]
+    ;punem in ah caracterul din key
+    mov ah, byte [edi + ebx]
+    ;facem xor intre caractere
+    xor al, ah
+    ;punem xor-ul in ciphertext
+    mov [edx + ebx], byte al
+    ;incrementam contorul
+    inc ebx
+    ;testam daca am ajuns la length
+    cmp ebx, ecx
+    ;facem un jump conditionat de cmp-ul de mai sus
+    jne iterate
     ;; DO NOT MODIFY
     popa
     leave

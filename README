@@ -1,0 +1,33 @@
+Ilie Andrei-Leonard 325CB
+
+1. otp
+In otp am initializat cu 0 registrul ebx prin xor.
+Ulterior am creeat un loop cu o eticheta "iterate".
+In iterate se initializeaza cu 0 registrul eax, in eax pe al si ah punem cele 2 caractere, iar in al facem xor-ul, ulterior mutam in edx, al-ul (xor-ul) si incrementam ebx-ul, cat timp ebx-ul nu este egal cu valoarea lenght-ului, repetam pasii anteriori.
+
+2. caesar
+
+In caesar, am declarat section .data, in care am declarat un iterator si l-am initializat cu 0.
+In eticheta caesar unde incepe implementarea, am pus 0 in ebx prin xor, apoi am declarat o eticheta iterate.
+In iterate pun 0 in eax prin or, apoi in registrul al punem caracterul de pe pozitia curenta.
+Setam iteratorul ca fiind 0 apoi testam daca caracterul din al este litera.
+Daca al este mai mic decat A, inseamna ca nu e litera si sarim la eticheta next_char, apoi daca nu, comparam cu Z, daca este less or equal inseamna ca e litera mare si sarim la eticheta found_letter, procesul se repeta si pentru a si z mici in continuare pe acelasi principiu.
+In eticheta found_letter, unde mergem daca am gasit o litera, setam iteratorul la 0 si comparam daca edi e 0 (adica daca are rost sa iteram mai mult de 0 ori), in caz afirmativ, mergem in eticheta iterateLetter, unde crestem iteratorul si testam daca suntem pe z (cazul in care mergem pe noCapsLetter, unde ne intoarcem in a), daca nu suntem pe z, testam daca suntem pe Z, in caz afirmativ mergem la eticheta capsLetter (unde facem bucla in A), iar daca suntem intermediar (intre a-z sau A-z fara capete) sarim fara conditie la eticheta final.
+La eticheta final crestem litera cu 1 pozitie, comparam iteraotrul cu cheia si vedem daca trebuie sa mai iteram odata sau daca sarim la urmatorul caracter.
+La eticheta capsLetter punem in al pe A pentru ca stim ca dupa Z urma A, si comparam iteratorul cu numarul din key (edi).
+La eticheta noCaspLetter este acelasi lucru ca la capsLetter doar ca punem a in loc de A.
+La eticheta next_char punem litera curenta prelucrata in cipertext pe pozitia ebx (curenta), apoi incrementam conturul si testam daca am ajuns la sfarsitul stringului, in caz contrar intram iar in bucla mare (iterate).
+
+3. 
+
+4. strstr
+
+In strstr am declarat section .data cu 2 variabile setate cu 0 (iterator si currentInNeedle).
+Incepem cu eticheta iterateThroughHaystack prin care parcurgem stringul cel mare si in care setam initial iteratorul ca fiind 0.
+Urmatoarea eticheta este iterate in care se petrece cam tot.
+Initializam eax cu 0 prin xor, punem in eax iteratorul.
+Avand nevoie de registrii liberi, facem push in stiva edx-ul, mutam caracterul curent din stringul mare in dl din edx, apoi facem push in stiva pentru ecx si edi, in edi punem pozitia pe care suntem in substring, iar in cl punem caracterul de pe pozitia pe care suntem din substring.
+Comparam cele 2 caractere, iar daca sunt egale, sarim la eticheta caractereEgale, in caz contrar sarim conditionat la CaractereNeegale.
+La eticheta caractereEgale luam din stiva cei 3 registrii pusi si vedem daca suntem pe pozitia 0 in substring. In caz afirmativ mergem la eticheta movNeedleInEdi in care punem in edx pozitia de unde incepe substringul in stringul mare. Daca nu necesita sa mutam pozitia in edi, mergem la eticheta dontMovInEdi in care crestem pozitia din substring (currentInNeedle), testam daca am gasit tot substringul in string, in caz afirmativ sarim la eticheta de la sfarsit - substrGasit. Daca nu l-am gasit, continuam loop-ul, crestem iteratorul si comparam daca ne orpim din loop.
+La eticheta CaractereNeegale luam din stive cei 3 registrii, setam pozitia curenta din substring pe 0 (currentInNeedle), crestem iteratorul si testam daca mai mergem in loop.
+Urmatoarea eticheta ne ajuta sa punem in ecx length+1 in cazul in care nu am gasit substringul.

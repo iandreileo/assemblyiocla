@@ -1,4 +1,5 @@
 %include "io.mac"
+
 section .data
     iterator DD 0
     currentInNeedle DD 0
@@ -21,115 +22,113 @@ my_strstr:
 
     ;; TO DO: Implement my_strstr
 
-    iterateThroughHaystack:
-        mov dword [iterator], 0
-        iterate:
-            ;setam eax cu 0
-            xor eax, eax
+iterateThroughHaystack:
+    mov dword [iterator], 0
+iterate:
+    ;setam eax cu 0
+    xor eax, eax
 
-            ;punem in eax iteratorul
-            mov eax, [iterator]
+    ;punem in eax iteratorul
+    mov eax, [iterator]
 
-            ;eliberam edx-ul punandu l in stiva
-            push edx
+    ;eliberam edx-ul punandu l in stiva
+    push edx
 
-            ;mutam caracterul in edx
-            mov dl, [esi + eax]
+    ;mutam caracterul in edx
+    mov dl, [esi + eax]
 
-            ;eliberam ecx-ul in stiva
-            push ecx
+    ;eliberam ecx-ul in stiva
+    push ecx
 
-            ;eliberam edi ca sa punem currentNeedle
-            push edi
+    ;eliberam edi ca sa punem currentNeedle
+    push edi
             
-            ;punem in edi currentInNeedle
-            mov edi, [currentInNeedle]
+    ;punem in edi currentInNeedle
+    mov edi, [currentInNeedle]
 
-            ;mutam primul caracter din needle in ecx
-            mov cl, [ebx + edi]
+    ;mutam caracterul curent din needle in cl
+    mov cl, [ebx + edi]
 
-            ;afisam pentru debug
-            ; PRINTF32 `!!! :%d :%d %c %c it:%d cin:%d !!\x0`, ecx, edx, ecx, edx, [iterator], [currentInNeedle]
+    ;afisam pentru debug
+    ; PRINTF32 `!!! :%d :%d %c %c it:%d cin:%d !!\x0`, ecx, edx, ecx, edx, [iterator], [currentInNeedle]
 
-            ;comparam cele 2 caractere
-            cmp ecx, edx
+    ;comparam cele 2 caractere
+    cmp ecx, edx
 
-            ; je caractereEgale
-            jne caractereNeegale
+    ; je caractereEgale
+    jne caractereNeegale
 
-            caractereEgale:
-                ;scoatem din stiva
-                ;pop edi
-                pop edi
-                ;scoatem ecx-ul din stiva
-                pop ecx
-                ;scoatem edx-ul din stiva
-                pop edx
+caractereEgale:
+    ;scoatem din stiva
+    ;pop edi
+    pop edi
+    ;scoatem ecx-ul din stiva
+    pop ecx
+    ;scoatem edx-ul din stiva
+    pop edx
 
-                ;daca currentInNeedle e 0 punem adresa in edi
-                cmp word [currentInNeedle], 0
-                je movNeedleInEdi
-                jne dontMovInEdi
+    ;daca currentInNeedle e 0 punem adresa in edi
+    cmp word [currentInNeedle], 0
+    je movNeedleInEdi
+    jne dontMovInEdi
 
-                movNeedleInEdi:
-                    ;bagam edx in stiva
-                    push edx
-                    ;punem in edx iteratorul
-                    mov edx, [iterator] 
-                    ;mutam in edi iteratorul
-                    mov dword [edi], edx
-                    ;scoatem edx din stiva
-                    pop edx
+movNeedleInEdi:
+    ;bagam edx in stiva
+    push edx
+    ;punem in edx iteratorul
+    mov edx, [iterator] 
+    ;mutam in edi iteratorul
+    mov dword [edi], edx
+    ;scoatem edx din stiva
+    pop edx
 
-                dontMovInEdi:
-                    ;crestem currentInNeedle
-                    inc word [currentInNeedle]
-                    ;testam daca currentInNeedle este egal cu edx
-                    cmp [currentInNeedle], edx
-                    je substrGasit
+dontMovInEdi:
+    ;crestem currentInNeedle
+    inc word [currentInNeedle]
+    ;testam daca currentInNeedle este egal cu edx
+    cmp [currentInNeedle], edx
+    je substrGasit
 
-                ;continuam loop-ul
-                inc eax
-                mov [iterator], eax
+    ;continuam loop-ul
+    inc eax
+    mov [iterator], eax
 
-                ;comparam iteratoru cu len string
-                cmp eax, ecx
+    ;comparam iteratoru cu len string
+    cmp eax, ecx
 
-                ;jne
-                jne iterate
+    ;jne
+    jne iterate
 
+caractereNeegale:
+    ;scoatem din stiva
+    ;pop edi
+    pop edi
+    ;scoatem ecx-ul din stiva
+    pop ecx
+    ;scoatem edx-ul din stiva
+    pop edx
+    ;setam currentInNeedle cu 0
+    mov word [currentInNeedle], 0
 
-            caractereNeegale:
-                ;scoatem din stiva
-                ;pop edi
-                pop edi
-                ;scoatem ecx-ul din stiva
-                pop ecx
-                ;scoatem edx-ul din stiva
-                pop edx
-                ; PRINTF32 `VAI\x0`
-                ;setam currentInNeedle cu 0
-                mov word [currentInNeedle], 0
+    ;crestem iteratorul
+    inc eax
+    mov [iterator], eax
 
-                ;crestem iteratorul
-                inc eax
-                mov [iterator], eax
+    ;comparam iteratoru cu len string
+    cmp eax, ecx
 
-                ;comparam iteratoru cu len string
-                cmp eax, ecx
+    ;jne
+    jne iterate
 
-                ;jne
-                jne iterate
-
-    substrNegasit:
-        ;crestem length ul cu 1
-        inc ecx
-        ;il punem in edi
-        mov dword [edi], ecx
+substrNegasit:
+    ;crestem length ul cu 1
+    inc ecx
+    ;il punem in edi
+    mov dword [edi], ecx
 
 
-    substrGasit:
-        ;am gasit substringul
+substrGasit:
+    ;am gasit substringul
 
     ;; DO NOT MODIFY
     popa
