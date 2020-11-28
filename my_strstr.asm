@@ -21,38 +21,42 @@ my_strstr:
     ;; TO DO: Implement my_strstr
 
     iterateThroughHaystack:
-        mov dword [iterator], 1
+        mov dword [iterator], 0
         iterate:
+            ;setam eax cu 0
             xor eax, eax
+
             ;punem in eax iteratorul
             mov eax, [iterator]
-            ;punem in ah caracteru curent
+
             ;eliberam edx-ul punandu l in stiva
             push edx
+
             ;mutam caracterul in edx
             mov edx, [esi + eax]
 
             ;eliberam ecx-ul in stiva
             push ecx
+            
             ;mutam primul caracter din needle in ecx
             mov ecx, [ebx + 0]
 
-            cmp edx, ecx
+            ;afisam pentru debug
+            PRINTF32 `%c \x0`, edx
 
-            je isEqual
-            jne notEqual
-
-            isEqual:
-                PRINTF32 `%c aaa\x0`, ecx
-
-            notEqual:
-                ;urmatorul caracter
-                inc dword [iterator]
-                PRINTF32 `%d aaa\x0`, [iterator]
-            
-            ; PRINTF32 `%c \x0`, edx
-            pop edx
+            ;scoatem ecx-ul din stiva
             pop ecx
+            ;scoatem edx-ul din stiva
+            pop edx
+
+            inc eax
+            mov [iterator], eax
+
+            ;comparam iteratorul cu len stringului mare
+            cmp eax, ecx
+
+            ;jump daca nu s egale
+            jne iterate
 
     ;; DO NOT MODIFY
     popa
