@@ -1,6 +1,7 @@
 %include "io.mac"
 section .data
     iterator DD 0
+    currentInNeedle DD 0
 section .text
     global my_strstr
     extern printf
@@ -33,30 +34,102 @@ my_strstr:
             push edx
 
             ;mutam caracterul in edx
-            mov edx, [esi + eax]
+            mov dl, [esi + eax]
 
             ;eliberam ecx-ul in stiva
             push ecx
+
+            ;eliberam edi ca sa punem currentNeedle
+            push edi
             
+            ;punem in edi currentInNeedle
+            mov edi, [currentInNeedle]
+
             ;mutam primul caracter din needle in ecx
-            mov ecx, [ebx + 0]
+            mov cl, [ebx + edi]
 
             ;afisam pentru debug
-            PRINTF32 `%c \x0`, edx
+            ; PRINTF32 `!!! :%d :%d %c %c it:%d cin:%d !!\x0`, ecx, edx, ecx, edx, [iterator], [currentInNeedle]
 
-            ;scoatem ecx-ul din stiva
-            pop ecx
-            ;scoatem edx-ul din stiva
-            pop edx
+            ;comparam cele 2 caractere
+            cmp ecx, edx
 
-            inc eax
-            mov [iterator], eax
+            ; je caractereEgale
+            jne caractereNeegale
 
-            ;comparam iteratorul cu len stringului mare
-            cmp eax, ecx
+            caractereEgale:
+                ;scoatem din stiva
+                ;pop edi
+                pop edi
+                ;scoatem ecx-ul din stiva
+                pop ecx
+                ;scoatem edx-ul din stiva
+                pop edx
 
-            ;jump daca nu s egale
-            jne iterate
+                ;daca currentInNeedle e 0 punem adresa in edi
+                cmp word [currentInNeedle], 0
+                je movNeedleInEdi
+                jne dontMovInEdi
+
+                movNeedleInEdi:
+                    ;bagam edx in stiva
+                    push edx
+                    ;punem in edx iteratorul
+                    mov edx, [iterator] 
+                    ;mutam in edi iteratorul
+                    mov dword [edi], edx
+                    ;scoatem edx din stiva
+                    pop edx
+
+                dontMovInEdi:
+                    ;crestem currentInNeedle
+                    inc word [currentInNeedle]
+                    ;testam daca currentInNeedle este egal cu edx
+                    cmp [currentInNeedle], edx
+                    je substrGasit
+
+                ;continuam loop-ul
+                inc eax
+                mov [iterator], eax
+
+                ;comparam iteratoru cu len string
+                cmp eax, ecx
+
+                ;jne
+                jne iterate
+
+
+            caractereNeegale:
+                ;scoatem din stiva
+                ;pop edi
+                pop edi
+                ;scoatem ecx-ul din stiva
+                pop ecx
+                ;scoatem edx-ul din stiva
+                pop edx
+                ; PRINTF32 `VAI\x0`
+                ;setam currentInNeedle cu 0
+                mov word [currentInNeedle], 0
+
+                ;crestem iteratorul
+                inc eax
+                mov [iterator], eax
+
+                ;comparam iteratoru cu len string
+                cmp eax, ecx
+
+                ;jne
+                jne iterate
+
+    substrNegasit:
+        ;crestem length ul cu 1
+        inc ecx
+        ;il punem in edi
+        mov dword [edi], ecx
+
+
+    substrGasit:
+        ;am gasit substringul
 
     ;; DO NOT MODIFY
     popa
