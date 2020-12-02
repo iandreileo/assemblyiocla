@@ -1,8 +1,7 @@
 %include "io.mac"
 section .data
-;daca nu merge schimba dw
-    iteratorPlain DD 0
-    iteratorKey DD 0
+    iteratorPlain DW 0
+    iteratorKey DW 0
     extendedKey times 10000 resb ''
 section .text
     global vigenere
@@ -27,7 +26,18 @@ vigenere:
     keyToExtendedKey:
         mov word [iteratorPlain], 0
         mov word [iteratorKey], 0
- 
+
+        ;ingul
+        push ebx
+        mov ebx, 0
+        eliminaString:
+            mov [extendedKey + ebx], byte 0x00
+            ; PRINTF32 `%d %d, elimin\x0`, ebx, ecx
+            inc ebx
+            cmp ebx, ecx
+            jne eliminaString
+        pop ebx
+
         iterate:
         ;iteram prin plaintext
         ;eax il facem 0
@@ -38,13 +48,13 @@ vigenere:
  
         ;punem in ebx iteratorul
         mov ebx, [iteratorPlain]
- 
+
         ;punem in al caracterul pe care suntem in plaintext
         mov al, byte [esi + ebx]
- 
+
         ;scoatem ebx din stiva
         pop ebx
- 
+
         ;comparam al cu A
         cmp al, 0x41
         ; daca e mai mic sarim la urmatorul caracter              
@@ -62,72 +72,62 @@ vigenere:
         ;daca e peste Z sarim la urmatorul caracter
         jg found_nonletter              
         ;daca nu inseamna ca e intre a si z
- 
+
         found_letter:
-            ;facem modulo intre pozitia pe care suntem si lungimea cheii
-            push edx
+            push ebx
             push eax
             push ecx
 
-            mov eax, [iteratorKey]
-            mov edx, 0
-            mov ecx, ebx
-            div ecx
+            ;punem in ebx iteratorul
+            mov ebx, [iteratorPlain]
+            ;punem in ecx iteratorul key
+            mov ecx, [iteratorKey]
+            ;punem in al caracterul din key
+            mov al, [edi + ecx]
+
+            ;punem in extendekey 
+            mov [extendedKey + ebx], byte al
 
             pop ecx
             pop eax
-            
-
-            push ebx
-            push eax
-            ;punem iteratorul in ebx
-            mov ebx, [iteratorPlain]
-            ;adaugam iteratorului literelor din cheie 1
-            add dword [iteratorKey], 1
-            
-            ;punem in cheie litera corespunzatoare
-            mov al, [edi + edx]
-            mov [extendedKey + ebx], byte al
-            pop eax
-            pop ebx
-            pop edx
-
-            ;aici ar trebui sa prelucram literele conform cerintei
-
-            ;crestem iteratorul si mergem pe pozitia urmatoare
-            inc word [iteratorPlain]
-            cmp [iteratorPlain], ecx
-            jb iterate
-            je final
-        found_nonletter:
-            push ebx
-            push eax
-            mov ebx, [iteratorPlain]
-            mov al, [esi + ebx]
-            mov [extendedKey + ebx], byte al
-            pop eax
             pop ebx
             
-            inc word [iteratorPlain]
-            cmp [iteratorPlain], ecx
-            jb iterate
+            ;crestem iteratorul pe keye
+            inc word [iteratorKey]
+
+            PRINTF32 `ebx: %d i_k: %d %d\x0`, ebx, [iteratorKey], [iteratorPlain]
+
+            cmp [iteratorKey], ebx
+            je resetIteratorKey
+            jne continueIteratorKey
+
+            resetIteratorKey:
+                mov word [iteratorKey], 0
+                PRINTF32 `Am ajuns\x0`,
+            continueIteratorKey:
+                inc word [iteratorPlain]
+                cmp [iteratorPlain], ecx
+                jb iterate
  
-final:
-; mov [extendedKey + ecx], byte 0x00
+        found_nonletter:
+            ; push ebx
+            ; push eax
+            
+            ; ;punem in al caracterul din plaintext
+            ; mov ebx, [iteratorPlain]
+            ; mov al, [esi + ebx]
+            ; mov [extendedKey + ebx], byte al
+            
+            ; pop eax
+            ; pop ebx
+            PRINTF32 `Nu trebuie aici\x0`
+            inc word [iteratorPlain]
+            cmp [iteratorPlain], ecx
+            jb iterate
+
+mov [extendedKey + ecx], byte 0x00
  PRINTF32 ` %s %d\x0`, extendedKey, ecx
  
-emptyString:
-    ;ingul
-    push ebx
-    mov ebx, 0
-    eliminaString:
-        mov [extendedKey + ebx], byte 0x00
-        ; PRINTF32 `%d %d, elimin\x0`, ebx, ecx
-        inc ebx
-        cmp ebx, ecx
-        jne eliminaString
-        pop ebx
-
 ;; DO NOT MODIFY
 popa
 leave

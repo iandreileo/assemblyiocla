@@ -304,12 +304,12 @@ int main(int argc, char *argv[])
     }
 
     if (argc == 1 || !strncmp(argv[1], "3", 1)) {
-        // test_vigenere();
+        test_vigenere();
         printf("--------------------------------------------------------------------\n");
     }
 
     if (argc == 1 || !strncmp(argv[1], "4", 1)) {
-        test_my_strstr();
+        // test_my_strstr();
         printf("--------------------------------------------------------------------\n");
     }
 
