@@ -1,13 +1,11 @@
 %include "io.mac"
 section .data
-;daca nu merge schimba dw
     iteratorPlain DD 0
     iteratorKey DD 0
     extendedKey times 10000 resb ''
 section .text
     global vigenere
     extern printf
- 
  
 vigenere:
     ;; DO NOT MODIFY
@@ -91,27 +89,24 @@ vigenere:
             pop eax
             pop ebx
             pop edx
-
-            ;aici ar trebui sa prelucram literele conform cerintei
             
             push eax
             push ebx
             push ecx
 
+            ;punem iteratorul in ebx
             mov ebx, [iteratorPlain]
+            ;punem in al din eax caracterul din cheia extinsa pe care suntem
             mov al,  [extendedKey + ebx]
             ;in al (eax) avem cate pozitii trebuie sa mergem la dreapta
             sub al, 0x41
-            ; PRINTF32 `%d \x0`, eax
             ; in cl avem caracterul
             mov cl, [ esi + ebx]
             ;acum trebuie sa mutam caracteurl cu al pozitii la dreapta
             add cl, al
-            ; PRINTF32 ` cl:%c \x0`, ecx
-            ; cmp cl, 0x7A
-            ; ja makeConversion
-            ; jmp dontMakeConversion
-
+            ;testam daca caracterul mutat este litera
+            ;daca este litera sarim la dontMakeConversions
+            ;daca nu este litera sarim la makeConversion unde facem loop in alfabet
             cmp cl, 0x7A
             jg makeConversion
             cmp cl, 0x41
@@ -120,14 +115,13 @@ vigenere:
             jbe dontMakeConversion
             cmp cl, 0x61
             jge dontMakeConversion
+            ;scadem 26 din caracter pentru a face loop in alfabet
             makeConversion:
                 sub cl, 26 
 
-
             dontMakeConversion:
-            ;mutam in plaintext
+            ;mutam in cipertext
             mov [edx + ebx], cl
-            ; PRINTF32 `%s \x0`, esi
 
             pop ecx
             pop ebx
@@ -137,7 +131,8 @@ vigenere:
             inc word [iteratorPlain]
             cmp [iteratorPlain], ecx
             jb iterate
-            je final
+            je emptyString
+        ;daca nu gasim o litera o punem direct in cheia extinsa si totodata si in sirul final
         found_nonletter:
             push ebx
             push eax
@@ -151,18 +146,14 @@ vigenere:
             inc word [iteratorPlain]
             cmp [iteratorPlain], ecx
             jb iterate
- 
-final:
-mov [esi + ecx], byte 0x00
 
- 
+;punem null pe toate pozitile ocupate din cheia extinsa
+;pentru a o putea folosi la testul urmator
 emptyString:
-    ;ingul
     push ebx
     mov ebx, 0
     eliminaString:
         mov [extendedKey + ebx], byte 0x00
-        ; PRINTF32 `%d %d, elimin\x0`, ebx, ecx
         inc ebx
         cmp ebx, ecx
         jne eliminaString

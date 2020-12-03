@@ -18,7 +18,15 @@ La eticheta capsLetter punem in al pe A pentru ca stim ca dupa Z urma A, si comp
 La eticheta noCaspLetter este acelasi lucru ca la capsLetter doar ca punem a in loc de A.
 La eticheta next_char punem litera curenta prelucrata in cipertext pe pozitia ebx (curenta), apoi incrementam conturul si testam daca am ajuns la sfarsitul stringului, in caz contrar intram iar in bucla mare (iterate).
 
-3. 
+3. vigenere
+
+In vigerene am declarat in section .data 3 variabile, 2 iteratoare si o cheie extinsa unde o voi creea.
+In prima eticheta - keyToExtendedKey initializam cei 2 iteratori cu 0 apoi intram intr un loop in eticheta iterate.
+In eticheta iterate (loop), facem eax-ul 0 prin xor, punem ebx-ul in stiva pentru a ne folosi de registru, punem in ebx iteratorul pe care suntem in plainText si in al din eax caracterul pe care suntem in plaintext, apoi facem pop in ebx din stiva.
+In continuare comparam caracterul din plaintext pe care suntem si vedem daca e litera, daca e litera sarim la eticheta found letter unde facem modulo intre pozitia pe care suntem si lungimea cheii pentru a vedea pe ce pozitie din cheie suntem, apoi punem in cheie litera corespunzatoare si in continuare prelucram litera din plaintext (o mutam la dreapta cu pozitia din alfabet a literei din cheia extinsa).
+In continuare, dupa ce am mutat caracterul cu n pozitii la dreapta (n este pozitia din alfabet), testam daca caracterul mutat este litera sau nu. Daca nu este litera ii scadem 26 ca sa il facem litera, daca nu punem caracterul direct pe pozitia corespunzatoare din cipertext, apoi crestem iteratorul si trecem la caracterul urmator din plaintext.
+In eticheta found_nonletter mergem in momentul in care caracterul din plaintext nu este o litera deci nu necesita prelucrarea ci punerea directa in cipertext si in extendedkey.
+Iar ulterior in emptyString golim cheia extinsa pentru a o folosi si la testele urmatoare.
 
 4. strstr
 
