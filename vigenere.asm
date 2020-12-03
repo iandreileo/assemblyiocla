@@ -93,6 +93,45 @@ vigenere:
             pop edx
 
             ;aici ar trebui sa prelucram literele conform cerintei
+            
+            push eax
+            push ebx
+            push ecx
+
+            mov ebx, [iteratorPlain]
+            mov al,  [extendedKey + ebx]
+            ;in al (eax) avem cate pozitii trebuie sa mergem la dreapta
+            sub al, 0x41
+            ; PRINTF32 `%d \x0`, eax
+            ; in cl avem caracterul
+            mov cl, [ esi + ebx]
+            ;acum trebuie sa mutam caracteurl cu al pozitii la dreapta
+            add cl, al
+            ; PRINTF32 ` cl:%c \x0`, ecx
+            ; cmp cl, 0x7A
+            ; ja makeConversion
+            ; jmp dontMakeConversion
+
+            cmp cl, 0x7A
+            jg makeConversion
+            cmp cl, 0x41
+            jb makeConversion
+            cmp cl, 0x5A
+            jbe dontMakeConversion
+            cmp cl, 0x61
+            jge dontMakeConversion
+            makeConversion:
+                sub cl, 26 
+
+
+            dontMakeConversion:
+            ;mutam in plaintext
+            mov [edx + ebx], cl
+            ; PRINTF32 `%s \x0`, esi
+
+            pop ecx
+            pop ebx
+            pop eax
 
             ;crestem iteratorul si mergem pe pozitia urmatoare
             inc word [iteratorPlain]
@@ -105,6 +144,7 @@ vigenere:
             mov ebx, [iteratorPlain]
             mov al, [esi + ebx]
             mov [extendedKey + ebx], byte al
+            mov [edx + ebx], byte al
             pop eax
             pop ebx
             
@@ -113,8 +153,8 @@ vigenere:
             jb iterate
  
 final:
-; mov [extendedKey + ecx], byte 0x00
- PRINTF32 ` %s %d\x0`, extendedKey, ecx
+mov [esi + ecx], byte 0x00
+
  
 emptyString:
     ;ingul
@@ -128,6 +168,7 @@ emptyString:
         jne eliminaString
         pop ebx
 
+; PRINTF32 ` %s \x0`, edx
 ;; DO NOT MODIFY
 popa
 leave

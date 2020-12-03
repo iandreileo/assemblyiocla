@@ -309,12 +309,12 @@ int main(int argc, char *argv[])
     }
 
     if (argc == 1 || !strncmp(argv[1], "4", 1)) {
-        // test_my_strstr();
+        test_my_strstr();
         printf("--------------------------------------------------------------------\n");
     }
 
     if (argc == 1 || !strncmp(argv[1], "5", 1)) {
-        // test_bin_to_hex();
+        test_bin_to_hex();
         printf("--------------------------------------------------------------------\n");
     }
 
